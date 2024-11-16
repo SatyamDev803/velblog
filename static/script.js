@@ -10,6 +10,6 @@
             alert.classList.remove('show'); // This triggers the fade out
             alert.classList.add('fade');    // This ensures it fades before disappearing
             setTimeout(() => alert.remove(), 500); // Removes from the DOM after fade out
-        }, 3000); // Adjust 5000 ms (5 seconds) as needed
+        }, 5000); // Adjust 5000 ms (5 seconds) as needed
     });
 });
