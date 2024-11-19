@@ -1,21 +1,38 @@
 {% extends "base.html" %}
 
 {% block title %} Blog Home {% endblock title %}
+
 {% block blogactive %} active {% endblock blogactive %}
+
+{% load humanize %}
 
 {% block body %}
 <div class="container my-3">
     <h2 class="mb-3">Articles</h2>
-    {% for post in allPosts %} 
+    {% for post in allPosts %}
 
     <div class="row mb-2">
         <div class="col-md-12">
             <div class="row g-0 border rounded-4 overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
                 <div class="col p-4 d-flex flex-column position-static">
-                    <strong class="d-inline-block mb-2">Article by {{post.author}}</strong>
-                    <h3 class="mb-0">{{post.title}}</h3>
-                    <div class="mb-1 text-body-secondary">{{post.datetime}}</div>
-                    <p class="card-text mb-auto">{{post.content | truncatechars:500}}</p>
+                    <!-- Flex container for author and timestamp -->
+                    <div class="d-flex justify-content-between mb-2">
+                        <strong class="d-inline-block text-primary">
+                            Article by {{post.author}}
+                            <span class="badge bg-secondary">{{ post.views }} views</span>
+                        </strong>
+                        <div class="text-body-secondary">{{post.timeStamp|naturaltime}}</div>
+                    </div>
+
+                    <div class="d-flex flex-column">
+                        <h3 class="mb-0"><a class="text-dark text-decoration-none"
+                                href="/blog/{{post.slug}}">{{post.title}}</a></h3>
+                    </div>
+
+                    <div class="preview">
+                        {{post.content | safe |truncatechars_html:500}}
+                    </div>
+
                     <div class="my-2">
                         <a class="btn btn-primary" href="/blog/{{post.slug}}" role="button">Continue Reading</a>
                     </div>
@@ -31,27 +48,6 @@
                 </div>
             </div>
         </div>
-        {% comment %} <div class="col-md-6">
-            <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-                <div class="col p-4 d-flex flex-column position-static">
-                    <strong class="d-inline-block mb-2 text-success-emphasis">Design</strong>
-                    <h3 class="mb-0">Post title</h3>
-                    <div class="mb-1 text-body-secondary">Nov 11</div>
-                    <p class="mb-auto">This is a wider card with supporting text below as a natural lead-in to
-                        additional content.</p>
-                    <a class="btn btn-primary btn-sm" href="/blog" role="button">Continue Reading</a>
-                </div>
-                <div class="col-auto d-none d-lg-block">
-                    <svg class="bd-placeholder-img" width="200" height="250" xmlns="http://www.w3.org/2000/svg"
-                        role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice"
-                        focusable="false">
-                        <title>Placeholder</title>
-                        <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef"
-                            dy=".3em">Thumbnail</text>
-                    </svg>
-                </div>
-            </div>
-        </div> {% endcomment %}
     </div>
 
     {% endfor %}

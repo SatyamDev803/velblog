@@ -1,65 +1,138 @@
 {% extends "base.html" %}
 
 {% block title %} BlogPost {% endblock title %}
+
 {% block blogactive %} active {% endblock blogactive %}
 
-{% block body %}
+{% load humanize %}
 
+{% block body %}
 <div class="container my-3">
-    <div class="row g-5">
-        <div class="col-md-8">
-            <article class="blog-post">
-                <h2 class="display-5 link-body-emphasis mb-1">{{post.title}}</h2>
-                <p class="blog-post-meta">{{post.timeStamp}} by <a class="text-decoration-none" href="/about">{{post.author}}</a></p>
-                <hr>
-            
-                <p>{{post.content}}</p>
-            </article>
-        </div>
-    
-        <div class="col-md-4">
-          <div class="position-sticky" style="top: 2rem;">
-            <div class="p-4 mb-3 bg-body-tertiary rounded-4">
-              <h4 class="fst-italic">About</h4>
-              <p class="mb-0">Customize this section to tell your visitors a little bit about your publication, writers, content, or something else entirely. Totally up to you.</p>
-            </div>
-    
-            <div>
-              <h4 class="fst-italic">Recent posts</h4>
-              <ul class="list-unstyled">
-                <li>
-                  <a class="d-flex flex-column flex-lg-row gap-3 align-items-start align-items-lg-center py-3 link-body-emphasis text-decoration-none border-top" href="#">
-                    <svg class="bd-placeholder-img" width="100%" height="96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#777"></rect></svg>
-                    <div class="col-lg-8">
-                      <h6 class="mb-0">Example blog post title</h6>
-                      <small class="text-body-secondary">January 15, 2024</small>
-                    </div>
-                  </a>
-                </li>
-                <li>
-                  <a class="d-flex flex-column flex-lg-row gap-3 align-items-start align-items-lg-center py-3 link-body-emphasis text-decoration-none border-top" href="#">
-                    <svg class="bd-placeholder-img" width="100%" height="96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#777"></rect></svg>
-                    <div class="col-lg-8">
-                      <h6 class="mb-0">This is another blog post title</h6>
-                      <small class="text-body-secondary">January 14, 2024</small>
-                    </div>
-                  </a>
-                </li>
-                <li>
-                  <a class="d-flex flex-column flex-lg-row gap-3 align-items-start align-items-lg-center py-3 link-body-emphasis text-decoration-none border-top" href="#">
-                    <svg class="bd-placeholder-img" width="100%" height="96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="#777"></rect></svg>
-                    <div class="col-lg-8">
-                      <h6 class="mb-0">Longer blog post title: This one has multiple lines!</h6>
-                      <small class="text-body-secondary">January 13, 2024</small>
-                    </div>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
+  <div class="row g-5">
+    <div class="col-md-8">
+      <article class="blog-post">
+        <h2 class="display-5 link-body-emphasis mb-1">{{ post.title }}</h2>
+        <p class="blog-post-meta">
+          <small>
+            <span class="text-muted">{{ post.timeStamp }} by</span>
+            <a class="text-decoration-none" href="/about">{{ post.author }}</a>
+            <span class="mx-2">|</span>
+            <span class="badge bg-primary">{{ post.views }} views</span>
+          </small>
+        </p>
+        <hr>
+        <p>{{ post.content | safe }}</p>
+      </article>
+    </div>
+
+    <div class="col-md-4">
+      <div class="mb-3" style="top: 2rem;">
+        <div class="p-4 mb-3 bg-body-tertiary rounded-4">
+          <h4 class="fst-italic">About</h4>
+          <p class="mb-0">Customize this section to tell your visitors a little bit about your publication, writers,
+            content, or something else entirely.</p>
         </div>
       </div>
+
+      <div class="mb-3" style="top: 2rem;">
+        <div class="p-4 mb-3 bg-body-tertiary rounded-4">
+          <h4 class="fst-italic">Recent Posts</h4>
+          <p class="mb-0">This section can be customized to display recent blog posts or similar content.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container my-3">
+  <h2>Comments ({{ comments.count }})</h2>
+  <div class="bg-body-tertiary rounded-3 col-md-8 p-4 mb-4">
+    {% if user.is_authenticated %}
+    <form method="POST" action="/blog/postComment">
+      {% csrf_token %}
+      <div class="form-group mb-3">
+        <label for="comment">Post Your Comment:</label>
+        <input type="text" class="form-control mt-1" name="comment" id="comment" placeholder="Enter your comment">
+      </div>
+      <input type="hidden" name="sno" value="{{ post.sno }}">
+      <input type="hidden" name="parentSno" value="">
+      <button type="submit" class="btn btn-primary btn-block">Post Comment</button>
+    </form>
+    {% else %}
+    <p class="m-0">Please login to post a comment</p>
+    {% endif %}
+  </div>
+
+  <!-- Displaying Comments -->
+  {% for comment in comments %}
+  <div class="bg-body-tertiary rounded-3 col-md-8 mb-2 shadow-sm p-3">
+    <div class="d-flex align-items-center">
+      <i class="fas fa-user-circle fa-2x text-black mr-3"></i>
+      <div class="d-flex justify-content-between w-100 ms-2">
+        <h5 class="mb-0">{{ comment.user.username }}</h5>
+        <small class="text-muted">{{ comment.timestamp|naturaltime }}</small>
+      </div>
+    </div>
+
+    <p class="mt-2">{{ comment.comment }}</p>
+
+    <!-- Reply Button and Form -->
+    <div class="reply mx-0 mt-2">
+      {% if user.is_authenticated %}
+      <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse"
+        data-bs-target="#replyBox{{ comment.sno }}" aria-expanded="false" aria-controls="replyBox{{ comment.sno }}">
+        Reply
+      </button>
+      <div class="collapse" id="replyBox{{ comment.sno }}">
+        <div class="card card-body my-2">
+          <form method="POST" action="/blog/postComment">
+            {% csrf_token %}
+            <input type="hidden" name="sno" value="{{ post.sno }}">
+            <input type="hidden" name="parentSno" value="{{ comment.sno }}">
+            <div class="form-group mb-3">
+              <label for="comment">Post a reply</label>
+              <input type="text" class="form-control mt-1" name="comment" id="comment" placeholder="Enter your reply">
+            </div>
+            <button type="submit" class="btn btn-sm btn-primary btn-block">Post Reply</button>
+          </form>
+        </div>
+      </div>
+      {% else %}
+      <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse"
+        data-bs-target="#replyBox{{ comment.sno }}" aria-expanded="false" aria-controls="replyBox{{ comment.sno }}"
+        disabled>
+        Login to Reply
+      </button>
+      {% endif %}
+
+      <!-- View Replies Button (Only if there are replies) -->
+      {% if comment.replies.count > 0 %}
+      <button id="toggle-button-{{ comment.sno }}" class="btn btn-secondary btn-sm"
+        onclick="toggleReplies('{{ comment.sno }}')">
+        View Replies
+      </button>
+      {% endif %}
+
+      <!-- Replies Section (Initially Hidden) -->
+      <div id="replies-{{ comment.sno }}" class="replies-section mt-2" style="display: none;">
+        {% for reply in comment.replies.all %}
+        <div class="bg-body-tertiary rounded-3 col-md-8 my-2 shadow-sm p-3">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-user-circle fa-2x text-black mr-3"></i>
+            <div class="d-flex justify-content-between w-100 ms-2">
+              <h5 class="mb-0">{{ reply.user.username }}</h5>
+              <small class="text-muted">{{ reply.timestamp|naturaltime }}</small>
+            </div>
+          </div>
+          <p class="mt-2">{{ reply.comment }}</p>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <p class="">No comments yet. Be the first to comment!</p>
+  {% endfor %}
 </div>
 
 {% endblock body %}
-
