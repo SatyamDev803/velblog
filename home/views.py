@@ -67,15 +67,15 @@ def handleSignup(request):
 
         # Check for erroeneous inputs
         if len(username) > 10:
-            messages.error(request, "Username must be under 10 chracters")
+            messages.warning(request, "Username must be under 10 chracters")
             return redirect('home')
         
         if not username.isalnum():
-            messages.error(request, "Username should only contain letters and numbers")
+            messages.warning(request, "Username should only contain letters and numbers")
             return redirect('home')
         
         if password1 != password2:
-            messages.erroe(request, "Passwords do no match")
+            messages.warning(request, "Passwords do no match")
             return redirect('home')
         
         # Create the user
@@ -101,7 +101,7 @@ def handleLogin(request):
             messages.success(request, "Successfully Logged In")
             return redirect('home')
         else:
-            messages.error(request, "Invalid Credentials, Please try again")
+            messages.warning(request, "Invalid Credentials, Please try again")
             return redirect('home')
     return HttpResponse('404 - Not Found')
 
@@ -111,3 +111,5 @@ def handleLogout(request):
     return redirect('home')
 
 
+def createBlog(request):
+    return render(request, 'home/createBlog.html')

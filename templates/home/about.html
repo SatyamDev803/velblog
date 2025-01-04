@@ -6,6 +6,10 @@
 {% block body %}
 <div class="container">
     <h3 class="">This is about page</h3>
+    <!-- Button to navigate to createBlog.html -->
+    <a href="{% url 'createBlog' %}">
+        <button class="btn btn-primary">Create Blog</button>
+    </a>
 </div>
 {% endblock body %}
 

@@ -15,13 +15,6 @@ def blogPost(request, slug):
     comments = BlogComment.objects.filter(post=post, parent__isnull=True).order_by('-timestamp')  
     replies = BlogComment.objects.filter(post=post).exclude(parent__isnull=True).order_by('parent__timestamp')  
 
-    # replyDict = {}
-    # for reply in replies:
-    #     if reply.parent.sno not in replyDict.keys():
-    #         replyDict[reply.parent.sno] = [reply]
-    #     else:
-    #         replyDict[reply.parent.sno].append(reply)
-
     context = {
         'post': post,
         'comments': comments,
@@ -30,37 +23,6 @@ def blogPost(request, slug):
     }
     return render(request, 'blog/blogPost.html', context)
 
-# def postComment(request):
-    if request.method == 'POST':
-        comment = request.POST.get('comment')
-        user = request.user
-        postSno = request.POST.get('sno')
-        parentSno = request.POST.get('parentSno')
-
-
-        if not postSno:
-            messages.error(request, "Invalid post reference.")
-            return redirect('/blog/')  
-        try:
-            post = Post.objects.get(sno=postSno)
-        except Post.DoesNotExist:
-            messages.error(request, "The post you are trying to comment on does not exist.")
-            return redirect('/blog/')  
-
-        if parentSno == "":
-            new_comment = BlogComment(comment=comment, user=user, post=post)
-            new_comment.save()
-            messages.success(request, "Your comment has been posted successfully")
-        else:
-            parent = BlogComment.objects.get(sno=parentSno)
-            new_comment = BlogComment(comment=comment, user=user, post=post, parent=parent)
-            new_comment.save()
-            messages.success(request, "Your reply has been posted successfully")
-
-        
-
-        return redirect(f"/blog/{post.slug}")  # Redirect to the post page
-    
 def postComment(request):
     if request.method == 'POST':
         comment = request.POST.get('comment')  # The comment text
@@ -78,6 +40,11 @@ def postComment(request):
         except Post.DoesNotExist:
             messages.error(request, "The post you are trying to comment on does not exist.")
             return redirect('/blog/')
+
+        # Validate Comment 
+        if not comment or comment.strip() == "":
+            messages.warning(request, "Comment cannot be empty.")
+            return redirect(f"/blog/{post.slug}")
 
         # Determine if this is a new comment or a reply
         if parentSno == "" or parentSno is None:
