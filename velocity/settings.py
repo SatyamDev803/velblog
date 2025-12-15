@@ -10,9 +10,15 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+
+# ... existing imports ...
 from pathlib import Path
 from django.contrib.messages import constants as messages
 import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,16 +28,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-giexlc1&ttxs=rd@eea8))8x)f+it3+zrgxm^*3t%6pp)&jrpp'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-giexlc1&ttxs=rd@eea8))8x)f+it3+zrgxm^*3t%6pp)&jrpp')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = [
-    '192.168.0.101',
-    '127.0.0.1',
-    '0.0.0.0'
-]
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -45,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'home.apps.HomeConfig',
     'blog.apps.BlogConfig',
+    'billing.apps.BillingConfig', # New Billing App
     'django.contrib.humanize',
     'tinymce',
 ]
@@ -55,6 +58,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'velocity.middleware.JWTAuthMiddleware', # Custom JWT Auth
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -64,7 +68,7 @@ ROOT_URLCONF = 'velocity.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
+        'DIRS': [BASE_DIR / 'templates'], # Modified to use BASE_DIR
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -147,3 +151,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
+
+# Payment & Auth Settings
+STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET')
+
+RAZORPAY_KEY_ID = os.getenv('RAZORPAY_KEY_ID')
+RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET')
+
+JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', SECRET_KEY)

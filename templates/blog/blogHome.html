@@ -1,55 +1,36 @@
 {% extends "base.html" %}
 
-{% block title %} Blog Home {% endblock title %}
-
-{% block blogactive %} active {% endblock blogactive %}
-
+{% block title %} BLOG - VELBLOG {% endblock title %}
 {% load humanize %}
 
 {% block body %}
-<div class="container my-3">
-    <h2 class="m-0 mb-3">Articles</h2>
+<div class="mb-4 text-center">
+    <h1 style="text-transform: uppercase; font-size: 3rem; margin-bottom: 20px;">The Archive</h1>
+    <div style="width: 50px; height: 4px; background: var(--border-strong); margin: 0 auto;"></div>
+</div>
+
+<div class="grid" style="grid-template-columns: repeat(2, 1fr);">
     {% for post in allPosts %}
-    
-    <div class="row mb-2">
-        <div class="col-md-12">
-            <div class="row g-0 border rounded-4 overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-                <div class="col p-4 d-flex flex-column position-static">
-                    <!-- Flex container for author and timestamp -->
-                    <div class="d-flex justify-content-between mb-2">
-                        <strong class="d-inline-block text-primary">
-                            Article by {{post.author}}
-                            <span class="badge bg-secondary">{{ post.views }} views</span>
-                        </strong>
-                        <div class="text-body-secondary">{{post.timeStamp|naturaltime}}</div>
-                    </div>
-
-                    <div class="d-flex flex-column">
-                        <h3 class="mb-0"><a class="text-dark text-decoration-none"
-                                href="/blog/{{post.slug}}">{{post.title}}</a></h3>
-                    </div>
-
-                    <div class="preview">
-                        {{post.content | safe |truncatechars_html:500}}
-                    </div>
-
-                    <div class="my-2">
-                        <a class="btn btn-primary" href="/blog/{{post.slug}}" role="button">Continue Reading</a>
-                    </div>
-                </div>
-                <div class="col-auto d-none d-lg-block">
-                    <svg class="bd-placeholder-img" width="350" height="100%" xmlns="http://www.w3.org/2000/svg"
-                        role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice"
-                        focusable="false">
-                        <title>Placeholder</title>
-                        <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef"
-                            dy=".3em">Thumbnail</text>
-                    </svg>
-                </div>
+    <div class="post-card">
+        <div class="post-img-placeholder">
+            <span style="font-size: 3rem; font-weight: bold;">{{ post.title|make_list|first }}</span>
+        </div>
+        <div class="post-content">
+            <div class="post-meta flex justify-between">
+                <span>{{post.author}}</span>
+                <span>{{post.timeStamp|naturaltime}}</span>
             </div>
+
+            <h3 class="post-title">{{post.title}}</h3>
+
+            <p style="margin-bottom: 20px; flex-grow: 1;">
+                {{post.content | safe | truncatechars_html:120}}
+            </p>
+
+            <a href="/blog/{{post.slug}}" class="btn btn-outline" style="width: 100%; text-align: center;">READ FULL
+                ENTRY</a>
         </div>
     </div>
-
     {% endfor %}
 </div>
 {% endblock body %}

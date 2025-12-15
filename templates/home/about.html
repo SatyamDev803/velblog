@@ -1,15 +1,27 @@
 {% extends "base.html" %}
 
-{% block title %} About {% endblock title %}
+{% block title %} About - VelBlog {% endblock title %}
 {% block aboutactive %} active {% endblock aboutactive %}
 
 {% block body %}
-<div class="container">
-    <h3 class="">This is about page</h3>
-    <!-- Button to navigate to createBlog.html -->
-    <a href="{% url 'createBlog' %}">
-        <button class="btn btn-primary">Create Blog</button>
-    </a>
+<div class="container animate-fade-in" style="max-width: 800px;">
+    <div class="glass" style="padding: 40px;">
+        <h1 class="text-center" style="margin-bottom: 30px;">About VelBlog</h1>
+
+        <p style="color: var(--text-secondary); margin-bottom: 20px;">
+            VelBlog is a next-generation blogging platform designed for developers, creators, and thinkers.
+            We believe in the power of words and the importance of a clean, distraction-free reading experience.
+        </p>
+
+        <p style="color: var(--text-secondary); margin-bottom: 20px;">
+            Built with modern web technologies, VelBlog offers seamless performance, beautiful aesthetics,
+            and a robust set of features to help you share your ideas with the world.
+        </p>
+
+        <div style="margin-top: 40px; text-align: center;">
+            <p style="margin-bottom: 15px;">Have something to say?</p>
+            <a href="{% url 'createBlog' %}" class="btn btn-primary">Start Writing Now</a>
+        </div>
+    </div>
 </div>
 {% endblock body %}
-

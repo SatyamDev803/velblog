@@ -1,56 +1,50 @@
 {% extends "base.html" %}
 
-{% block title %} Home {% endblock title %}
-
-{% block homeactive %} active {% endblock homeactive %}
+{% block title %} HOME - VELBLOG {% endblock title %}
 
 {% load humanize %}
 
 {% block body %}
-<div class="container my-4">
-  <div class="position-relative p-5 text-center text-muted border border-dashed rounded-4">
-    <h1 class="text-body-emphasis">Welcome to VelBlog</h1>
-    <p class="col-lg-6 mx-auto mb-4">
-      This faded back jumbotron is useful for placeholder content. It's also a great way to add a bit of context to a
-      page or section when no content is available and to encourage visitors to take a specific action.
-    </p>
-    <a class="btn btn-primary btn-lg" href="/blog" role="button">Explore Blogs</a>
+<div class="text-center" style="margin-bottom: 80px; padding: 60px 0; border-bottom: 2px solid var(--border-strong);">
+  <h1 style="font-size: 4rem; text-transform: uppercase; letter-spacing: -2px; margin-bottom: 20px;">
+    Pure.<br>Minimal.<br>Content.
+  </h1>
+  <p style="font-size: 1.2rem; max-width: 600px; margin: 0 auto 40px; font-family: serif; color: var(--text-muted);">
+    A publishing platform for serious readers and writers.
+  </p>
+  <div class="flex justify-center" style="gap: 20px;">
+    <a class="btn btn-primary" href="/billing/pricing">GET ACCESS</a>
+    <a class="btn btn-outline" href="/blog">READ NOW</a>
   </div>
 </div>
 
-<div class="container">
-  <h3 class="mb-3 text-center">Popular Blogposts</h3>
-  <div class="row mb-2">
-    {% for post in popular_posts %}
-    <div class="col-md-6">
-      <div class="row g-0 border rounded-4 overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-        <div class="col p-4 d-flex flex-column position-static bg-body">
-          <!-- Flex container for author and timestamp -->
-          <div class="d-flex justify-content-between mb-2">
-            <strong class="d-inline-block text-primary">{{ post.author }}</strong>
-            <div class="text-body-secondary">{{ post.timeStamp | naturaltime }}</div>
-          </div>
+<div class="mb-4">
+  <div class="flex justify-between items-center mb-4"
+    style="border-bottom: 2px solid var(--border-strong); padding-bottom: 20px;">
+    <h2 style="text-transform: uppercase;">Featured Writing</h2>
+    <a href="/blog" style="text-decoration: underline; color: var(--text-main);">VIEW ALL</a>
+  </div>
 
-          <h3 class="mb-0">{{ post.title }}</h3>
-          <div class="preview">
-            <!-- <p class="card-text mb-auto"> -->
-            {{post.content | safe |truncatechars_html:250}}
-            <!-- </p> -->
-          </div>
-          <a class="btn btn-primary btn-sm mt-2" href="/blog/{{ post.slug }}" role="button">See Post</a>
+  <div class="grid" style="grid-template-columns: repeat(2, 1fr);"> <!-- Explicit 2-column symmetry -->
+    {% for post in popular_posts %}
+    <div class="post-card">
+      <div class="post-img-placeholder">
+        <i class="fas fa-paragraph fa-3x"></i>
+      </div>
+      <div class="post-content">
+        <div class="post-meta flex justify-between">
+          <span>{{ post.author }}</span>
+          <span>{{ post.timeStamp|date:"M d, Y" }}</span>
         </div>
-        <div class="col-auto d-none d-lg-block">
-          <svg class="bd-placeholder-img" width="200px" height="100%" xmlns="http://www.w3.org/2000/svg" role="img"
-            aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false">
-            <title>Placeholder</title>
-            <rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef"
-              dy=".3em">Thumbnail</text>
-          </svg>
-        </div>
+        <h3 class="post-title">{{ post.title }}</h3>
+        <p style="margin-bottom: 20px; flex-grow: 1; color: var(--text-muted);">
+          {{post.content | safe | truncatechars:100}}
+        </p>
+        <a href="/blog/{{ post.slug }}" class="btn btn-outline" style="width: 100%; text-align: center;">READ
+          ARTICLE</a>
       </div>
     </div>
     {% endfor %}
   </div>
 </div>
-
 {% endblock body %}
