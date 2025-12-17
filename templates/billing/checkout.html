@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %} Checkout - VelBlog {% endblock title %}
+
+{% block body %}
+<!-- Stripe JS -->
+<script src="https://js.stripe.com/v3/"></script>
+<!-- Razorpay JS -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<div class="container animate-fade-in" style="max-width: 600px; margin-top: 60px;">
+    <div class="section-border">
+        <h2 class="mb-4 text-center">Secure Checkout</h2>
+
+        <div class="checkout-summary">
+            <p style="text-transform: uppercase; font-weight: 600; color: #555; margin-bottom: 8px;">Subscription To</p>
+            <h3 class="mb-2" style="font-size: 2rem;">{{ plan }} PLAN</h3>
+            <h1 class="display-4 fw-bold" style="font-size: 3rem;">₹{{ amount }}</h1>
+        </div>
+
+        <div class="payment-btn-row">
+            <button id="stripe-button" class="btn btn-primary flex justify-between items-center" style="width: 100%;">
+                <span>PAY WITH STRIPE</span>
+                <i class="fab fa-stripe fa-3x"></i>
+            </button>
+
+            <button id="razorpay-button" class="btn btn-outline flex justify-between items-center" style="width: 100%;">
+                <span>PAY WITH RAZORPAY</span>
+                <!-- Simple Razorpay Icon SVG -->
+                <svg width="100" height="24" viewBox="0 0 100 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    style="height: 24px;">
+                    <path
+                        d="M12.9 14.5C12.9 14.5 10.3 19.3 9.4 19.3H4L8.7 12.2C8.7 12.2 4.1 11.6 4.1 6.5C4.1 -0.4 14.5 -0.4 14.5 4.5C14.5 6.4 14.5 19.3 14.5 19.3H9.7L9.7 12.5C9.6 12.5 12.9 14.5 12.9 14.5ZM9.7 7.7V4.4C9.7 4.4 7.6 4.6 7.6 6C7.6 7.4 9.7 7.7 9.7 7.7Z"
+                        fill="#000000" />
+                    <path
+                        d="M22.5 12.6L19.4 7H14.5L19.8 14.9L16.2 19.3H21.4L23.3 16.7L25.1 19.3H30L25.8 13.9L30.9 7H26.3L22.5 12.6Z"
+                        fill="#000000" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="text-center mt-4">
+            <small style="color: var(--text-muted);"><i class="fas fa-lock"></i> SSL ENCRYPTED PAYMENT</small>
+        </div>
+    </div>
+</div>
+
+<script>
+    const stripe = Stripe('{{ stripe_public_key }}');
+    const plan = '{{ plan }}';
+
+    // Stripe
+    document.getElementById('stripe-button').addEventListener('click', () => {
+        fetch("{% url 'billing:create_stripe_session' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ plan: plan })
+        })
+            .then(response => response.json())
+            .then(session => {
+                return stripe.redirectToCheckout({ sessionId: session.sessionId });
+            })
+            .then(result => {
+                if (result.error) {
+                    alert(result.error.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Stripe connection error');
+            });
+    });
+
+    // Razorpay
+    document.getElementById('razorpay-button').addEventListener('click', () => {
+        fetch("{% url 'billing:create_razorpay_order' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ plan: plan })
+        })
+            .then(response => response.json())
+            .then(order => {
+                if (order.error) {
+                    alert(order.error);
+                    return;
+                }
+                var options = {
+                    "key": "{{ razorpay_key_id }}",
+                    "amount": order.amount,
+                    "currency": order.currency,
+                    "name": "VelBlog",
+                    "description": plan + " Subscription",
+                    "order_id": order.id,
+                    "handler": function (response) {
+                        // Pass Razorpay payment details to success page for verification
+                        const params = new URLSearchParams({
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_signature: response.razorpay_signature
+                        });
+                        window.location.href = "{% url 'billing:payment_success' %}?" + params.toString();
+                    },
+                    "theme": {
+                        "color": "#000000"
+                    },
+                    "modal": {
+                        "backdropclose": false
+                    }
+                };
+                var rzp1 = new Razorpay(options);
+                rzp1.open();
+                rzp1.on('payment.failed', function (response) {
+                    alert(response.error.description);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Could not initiate Razorpay payment");
+            });
+    });
+</script>
+{% endblock body %}

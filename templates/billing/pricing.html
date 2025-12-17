@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %} PRICING - VELBLOG {% endblock title %}
+
+{% block body %}
+<div class="text-center mb-4" style="border-bottom: 2px solid var(--border-strong); padding-bottom: 40px;">
+    <h1 class="display-4 fw-bold" style="text-transform: uppercase;">Membership Plans</h1>
+    <p class="lead" style="color: var(--text-muted);">SIMPLE PRICING. NO HIDDEN FEES.</p>
+</div>
+
+<div class="grid" style="grid-template-columns: repeat(3, 1fr);">
+    <!-- Free Plan -->
+    <div class="pricing-card">
+        <h3>FREE</h3>
+        <div class="pricing-amount">₹0</div>
+        <ul style="list-style: none; margin-bottom: 30px; line-height: 2; color: var(--text-muted);">
+            <li>Public Articles</li>
+            <li>Basic Reading</li>
+            <li>Community Comments</li>
+        </ul>
+        <button class="btn btn-outline" disabled style="width: 100%; opacity: 0.5;">CURRENT</button>
+    </div>
+
+    <!-- Pro Plan -->
+    <div class="pricing-card featured">
+        <h3>PRO</h3>
+        <div class="pricing-amount">₹999</div>
+        <ul style="list-style: none; margin-bottom: 30px; line-height: 2;">
+            <li>All Free Features</li>
+            <li>Ad-Free Experience</li>
+            <li>Exclusive Essays</li>
+            <li>Priority Support</li>
+        </ul>
+        <a href="{% url 'billing:checkout' 'PRO' %}" class="btn btn-primary"
+            style="width: 100%; border: 1px solid var(--surface-1);">UPGRADE NOW</a>
+    </div>
+
+    <!-- Enterprise Plan -->
+    <div class="pricing-card">
+        <h3>ENTERPRISE</h3>
+        <div class="pricing-amount">₹4999</div>
+        <ul style="list-style: none; margin-bottom: 30px; line-height: 2; color: var(--text-muted);">
+            <li>All Pro Features</li>
+            <li>Team Management</li>
+            <li>API Access</li>
+            <li>Concierge Onboarding</li>
+        </ul>
+        <a href="{% url 'billing:checkout' 'ENTERPRISE' %}" class="btn btn-outline" style="width: 100%;">CONTACT US</a>
+    </div>
+</div>
+{% endblock body %}

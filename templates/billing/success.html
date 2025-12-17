@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %} SUCCESS - VELBLOG {% endblock title %}
+
+{% block body %}
+<div class="container" style="max-width: 600px; margin-top: 80px; text-align: center;">
+    <div class="section-border" style="padding: 60px;">
+        <i class="fas fa-check-circle fa-4x mb-4" style="color: var(--text-main);"></i>
+        <h1 class="mb-4" style="text-transform: uppercase;">Payment Successful</h1>
+        <p class="mb-4" style="font-size: 1.2rem;">WELCOME TO THE CLUB. YOUR SUBSCRIPTION IS NOW ACTIVE.</p>
+        <div class="flex justify-center" style="gap: 20px;">
+            <a href="/blog" class="btn btn-primary">START READING</a>
+            <a href="/billing/pricing" class="btn btn-outline">VIEW ACCOUNT</a>
+        </div>
+    </div>
+</div>
+{% endblock body %}
