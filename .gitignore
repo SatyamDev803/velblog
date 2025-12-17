@@ -76,3 +76,7 @@ yarn-error.log
 *.bak
 *.swp
 .cache/
+
+
+.db.sqlite3
+.rzp-key.csv
