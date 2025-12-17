@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %} SIGN UP - VELBLOG {% endblock title %}
+
+{% block body %}
+<div class="container" style="max-width: 600px; margin-top: 60px;">
+    <div class="section-border">
+        <h2 class="mb-4 text-center" style="text-transform: uppercase;">Create Account</h2>
+
+        <form action="/signup" method="post">
+            {% csrf_token %}
+
+            <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div class="form-group">
+                    <label for="fname">FIRST NAME</label>
+                    <input type="text" id="fname" name="fname" required>
+                </div>
+                <div class="form-group">
+                    <label for="lname">LAST NAME</label>
+                    <input type="text" id="lname" name="lname" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="username">USERNAME</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">EMAIL ADDRESS</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label for="pass1">PASSWORD</label>
+                    <input type="password" id="pass1" name="password1" required>
+                </div>
+                <div class="form-group">
+                    <label for="pass2">CONFIRM</label>
+                    <input type="password" id="pass2" name="password2" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">REGISTER</button>
+        </form>
+    </div>
+</div>
+{% endblock body %}
