@@ -99,8 +99,11 @@ The following environment variables must be configured in your `.env` file:
 - `DEBUG`: Set to `True` for development, `False` for production
 - `STRIPE_PUBLIC_KEY`: Your Stripe publishable key
 - `STRIPE_SECRET_KEY`: Your Stripe secret key
+- `STRIPE_WEBHOOK_SECRET`: Your Stripe webhook signing secret (required for production)
 - `RAZORPAY_KEY_ID`: Your Razorpay key ID
 - `RAZORPAY_KEY_SECRET`: Your Razorpay key secret
+
+**Note**: In development mode, `STRIPE_WEBHOOK_SECRET` is optional and signature verification will be skipped. For production, you must configure this secret for secure webhook handling.
 
 ### Payment Gateway Setup
 
@@ -109,6 +112,12 @@ The following environment variables must be configured in your `.env` file:
 2. Navigate to Developers > API keys
 3. Copy your publishable and secret keys
 4. Add them to your `.env` file
+5. **For production**: Configure webhook endpoint
+   - Go to Developers > Webhooks
+   - Click "Add endpoint"
+   - URL: `https://yourdomain.com/billing/webhook/stripe/`
+   - Select events: `checkout.session.completed`
+   - Copy the webhook signing secret and add to `.env` as `STRIPE_WEBHOOK_SECRET`
 
 #### Razorpay
 1. Create an account at https://razorpay.com
